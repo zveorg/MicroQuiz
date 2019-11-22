@@ -1,0 +1,56 @@
+version: '3.4'
+
+services:
+
+  microquiz.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5100:80"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+
+  microquiz.services.quizzes.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"
+
+  microquiz.services.auth.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"
+
+  consul:
+    ports:
+      - "8500:8500"
+
+  mysql:
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: mysqlpassword
+
+  mongo:
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=dev
+      - MONGO_INITDB_ROOT_PASSWORD=dev
+
+  mongo-express:
+      environment:
+          - ME_CONFIG_MONGODB_SERVER=mongo
+          - ME_CONFIG_MONGODB_PORT=27017
+          - ME_CONFIG_MONGODB_ENABLE_ADMIN=false
+          - ME_CONFIG_MONGODB_AUTH_DATABASE=admin
+          - ME_CONFIG_MONGODB_AUTH_USERNAME=dev
+          - ME_CONFIG_MONGODB_AUTH_PASSWORD=dev
+          - ME_CONFIG_BASICAUTH_USERNAME=dev
+          - ME_CONFIG_BASICAUTH_PASSWORD=dev
+      ports:
+        - "8081:8081"
+
+  rabbitmq:
+    ports:
+      - "15672:15672"
+      - "5672:5672"

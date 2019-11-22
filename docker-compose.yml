@@ -1,0 +1,53 @@
+version: '3.4'
+
+services:
+  microquiz.api:
+    image: ${DOCKER_REGISTRY-}microquizapi
+    build:
+      context: .
+      dockerfile: ../MicroQuiz.Api/src/MicroQuiz.Api/Dockerfile
+    depends_on:
+        - consul
+        - rabbitmq
+
+  microquiz.services.quizzes.api:
+    image: ${DOCKER_REGISTRY-}microquizservicesquizzesapi
+    build:
+      context: .
+      dockerfile: ../MicroQuiz.Services.Quizzes/src/MicroQuiz.Services.Quizzes.Api/Dockerfile
+    depends_on:
+        - mysql
+        - consul
+        - rabbitmq
+
+  microquiz.services.auth.api:
+    image: ${DOCKER_REGISTRY-}microquizservicesauthapi
+    build:
+      context: .
+      dockerfile: ../MicroQuiz.Services.Auth/src/MicroQuiz.Services.Auth.Api/Dockerfile
+    depends_on:
+        - mysql
+        - rabbitmq
+
+  consul:
+    image: consul:latest
+    command: consul agent -dev -log-level=warn -ui -client=0.0.0.0
+    hostname: consul
+    container_name: consul
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql
+
+  mongo:
+    image: mongo:latest
+
+  mongo-express:
+    image: mongo-express:latest
+    depends_on:
+      - mongo
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbit
+    container_name: rabbitmq
